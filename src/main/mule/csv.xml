@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="171054bc-be0d-4666-b724-6eedfb8c8dac" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="csvFlow" doc:id="6779543e-62e9-4b04-a700-1ee59e00b16b" >
+		<http:listener doc:name="Listener" doc:id="53dd475b-8d83-42a0-90e4-696fb8af369b" config-ref="HTTP_Listener_config" path="/csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="7c752b23-d05c-4a7d-b398-9e0bc8b30bc0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+payload.Employees.*Employee map ( employee , indexOfEmployee ) -> {
+	"first name": employee.FirstName default "",
+	"last name": employee.LastName default "",
+	salary: employee.Salary as String default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:id="5d77b16f-f653-4d37-b2d4-f210b9e7748c" path="E:\bb\bbb"/>
+	</flow>
+</mule>
